@@ -32,7 +32,7 @@ export default function Login({ navigation }: any) {
   }, [contador]);
 
   const handleLogin = () => {
-    navigation.navigate('HomeScreen', { email });
+    navigation.navigate('UserTabs', { email: email });
   };
 
   return (

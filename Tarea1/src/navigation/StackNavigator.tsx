@@ -21,8 +21,7 @@ export default function StackNavigator() {
     return (
         <Stack.Navigator initialRouteName="LoginScreen">
             <Stack.Screen name="LoginScreen" component={Login} /> 
-            <Stack.Screen name="RegisterScreen" component={Register} />
-            <Stack.Screen name="HomeScreen" component={Home} />       
+            <Stack.Screen name="RegisterScreen" component={Register} />     
             <Stack.Screen name="UserTabs" component={TabsNavigator}/>
         </Stack.Navigator>
     ); 
