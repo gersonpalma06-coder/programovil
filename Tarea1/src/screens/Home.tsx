@@ -1,52 +1,101 @@
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { RootStackParamList } from "../navigation/StackNavigator";
 import { CompositeScreenProps } from "@react-navigation/native";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { TabsParamList } from "../navigation/TabsNavigator";
+import CustomButton from "../components/CustomButton";
 import { navigationRef } from "../navigation/NavigationService";
+import { useTheme } from "../contexts/ThemeContext";
+import Card from "../components/Card";
 
 type NestedProps = CompositeScreenProps<
-BottomTabScreenProps<TabsParamList, 'HomeTab'>,
-NativeStackScreenProps<RootStackParamList>
-  >;
+  BottomTabScreenProps<TabsParamList, "HomeTab">,
+  NativeStackScreenProps<RootStackParamList>
+>;
 
-export default function Home({ route, navigation }: NestedProps) {
-  const userEmail = route.params?.email ?? "Usuario"; 
+export default function Home({ navigation, route }: NestedProps) {
+  
+  const { email } = route.params;
+  
+  const { colors } = useTheme();
 
-const handleLogout = () => {
+  const handleUserSettings = () => {
+    navigation.navigate("Settings");
+  };
+
+  const handleLogout = () => {
     if (navigationRef.isReady()) {
-      navigationRef.reset({
-        routes: [
-          // Es un arreglo para cual cada objeto representa una pantalla a la que se quiere navegar, en este caso solo queremos ir a la pantalla de login
-          {name: 'LoginScreen'}
-        ],
-        index: 0,
-      });
+        navigationRef.reset({
+    
+            routes: [
+                { name: 'LoginScreen' }
+            ], 
+            index: 0,
+        });
     }
   };
 
-const handleNavigate = () => {
+  const handleNavigate = () => {
     navigation.navigate('LoginScreen');
-  }
+  };
 
- return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Bienvenido, {userEmail}</Text>
-    </View>
+  return (
+    
+    <ScrollView 
+      style={{ backgroundColor: colors.background }}
+      contentContainerStyle={styles.container} 
+    >
+  
+      <Text style={[styles.welcome, { color: colors.text }]}>Bienvenido, {email} </Text>
+
+      <CustomButton
+        title="Ir a Preferencias de Usuario"
+        onPress={handleUserSettings}
+        variant="primary"
+      />
+      <CustomButton
+        title="Cerrar Sesion"
+        variant="secondary"
+        onPress={handleLogout}
+      />
+      <CustomButton
+        title="Ir atras"
+        variant="tertiary"
+        onPress={handleNavigate}
+      />
+
+      <Text style={[styles.sectionTitle, { color: colors.text }]}>
+        Tarjetas
+      </Text>
+      <Card
+        title='Notificaciones'
+        icon='notifications'
+        description='Revisa tus alertas y mensajes recientes.'
+      />
+      <Card
+        title='Actividad'
+        icon='pulse'
+        description='Consulta tu historial de actividad reciente.'
+      />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#fff',
-  },
-  text: {
+  container: { padding: 24, paddingBottom: 40, alignItems: "center" },
+  welcome: {
     fontSize: 18,
-    fontWeight: 'bold',
-  }
+    fontWeight: "600",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    marginTop: 24,
+    marginBottom: 12,
+    alignSelf: "flex-start", 
+  },
 });
