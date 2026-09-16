@@ -3,8 +3,10 @@ import { StyleSheet, Text, View } from 'react-native';
 import CustomButton from '../components/CustomButton';
 import CustomInput from '../components/CustomInput';
 import React, { useState, useEffect } from "react";
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Login({ navigation }: any) {
+const {login} = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -32,13 +34,18 @@ export default function Login({ navigation }: any) {
   }, [contador]);
 
   const handleLogin = () => {
-    navigation.navigate('UserTabs', { email: email });
+    const allowed = login(email);
+    if (allowed) {
+    navigation.navigate('UserTabs', { screen: "HomeTab" , params:{ email }});
+    } else {
+      console.log('Acceso denegado. Solo se permiten correos .edu');
+    }
   };
 
   return (
     <View style={styles.container}>
 
-      <Text style={styles.title}>¡Bienvenido!</Text>
+      <Text style={styles.title}>Bienvenido a Login</Text>
 
       <CustomInput
         placeholder="estudiante@unitec.com"
