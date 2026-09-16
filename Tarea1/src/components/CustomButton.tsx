@@ -1,36 +1,57 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet} from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, ViewStyle } from 'react-native';
+import { useTheme } from '../contexts/ThemeContext';
 
 type CustomButtonProps = {
     title: string;
     onPress: () => void;
-    variant?: "primary" | "secondary" | "tertiary"; // a esto se le conoce como union de literales
+    variant?: "primary" | "secondary" | "tertiary"; 
 }
 
 export default function CustomButton({title, onPress, variant='primary'}: CustomButtonProps) {
-  const styles = getstyles(variant);
+    
+    const { colors } = useTheme();
+
+    const getBackground = (): string => {
+        if (variant === 'primary')   return colors.primary;
+        if (variant === 'secondary') return colors.surface;
+        return 'transparent';          
+    };
+
+    const getTextColor = (): string => {
+        if (variant === 'primary')   return '#FFFFFF';
+        if (variant === 'secondary') return colors.text;
+        return colors.primary;          
+    };
+
+    const getBorder = (): ViewStyle => {
+        if (variant === 'tertiary') return { borderWidth: 1.5, borderColor: colors.primary };
+        if (variant === 'secondary') return { borderWidth: 1, borderColor: colors.border };
+        return {};
+    };
+
     return (
-        <TouchableOpacity style={styles.button} onPress={onPress}>
-            <Text style={styles.buttonTitle}> {title} </Text>
+        <TouchableOpacity
+            style={[styles.base, { backgroundColor: getBackground() }, getBorder()]}
+            onPress={onPress}
+            activeOpacity={0.75} 
+        >
+            <Text style={[styles.label, { color: getTextColor() }]}>{title}</Text>
         </TouchableOpacity>
     );
 }
 
-const getstyles = (variant: "primary" | "secondary" | "tertiary") => 
-    { return StyleSheet.create({
-    button: {
-        backgroundColor: variant === 'primary' ? 'navy' : 
-                            variant === 'secondary' ? 'lightblue' : '#ffffff', //esto es un operador ternario, es como un if else, anidado, si es primary, navy, si es secondary, lightblue, sino blanco
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 5,
-        width: 150,
-    },    
-    buttonTitle: {
-        color: variant === 'primary' ? 'white' : 
-                variant === 'secondary' ? 'black' : 'black', //esto es un operador ternario, es como un if else, anidado, si es primary, blanco, si es secondary, negro, sino navy
-        fontSize: 16,
-        fontWeight: 'bold',
-        textAlign: 'center',
-    }
-})}
+const styles = StyleSheet.create({
+    base: {
+        borderRadius: 10,       
+        paddingVertical: 14,    
+        paddingHorizontal: 24,  
+        marginVertical: 6,
+        alignItems: 'center',
+    },
+    label: { 
+        fontSize: 16, 
+        fontWeight: 'bold', 
+        textAlign: 'center'
+    },
+});
